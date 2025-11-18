@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante La Buena Mesa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Restaurante La Buena Mesa</h1>
+    <p>Reserva tu mesa fácilmente</p>
+</header>
+
+<section class="reserva">
+    <h2>Reservar mesa</h2>
+
+    <form id="formReserva">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required>
+
+        <label>Teléfono:</label>
+        <input type="tel" id="telefono" required>
+
+        <label>Fecha:</label>
+        <input type="date" id="fecha" required>
+
+        <label>Hora:</label>
+        <input type="time" id="hora" required>
+
+        <label>Personas:</label>
+        <input type="number" id="personas" min="1" required>
+
+        <button type="submit">Confirmar Reserva</button>
+    </form>
+
+    <p id="mensaje"></p>
+</section>
+
+<section class="lista">
+    <h2>Reservas registradas</h2>
+    <ul id="listaReservas"></ul>
+</section>
+
+<script src="reservas.js"></script>
+</body>
+</html>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
+
+header {
+    background: #a30000;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.reserva, .lista {
+    background: white;
+    max-width: 500px;
+    padding: 25px;
+    margin: 30px auto;
+    border-radius: 10px;
+}
+
+form input, form button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+button {
+    background: #a30000;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+li {
+    background: #eee;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+}
+const form = document.getElementById("formReserva");
+const lista = document.getElementById("listaReservas");
+const mensaje = document.getElementById("mensaje");
+
+// Cargar reservas
+function cargarReservas() {
+    lista.innerHTML = "";
+    let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+    reservas.forEach((r, i) => {
+        let li = document.createElement("li");
+        li.textContent = `${r.fecha} ${r.hora} - ${r.nombre} (${r.personas} personas)`;
+        lista.appendChild(li);
+    });
+}
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const reserva = {
+        nombre: nombre.value,
+        telefono: telefono.value,
+        fecha: fecha.value,
+        hora: hora.value,
+        personas: personas.value
+    };
+
+    let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+    reservas.push(reserva);
+    localStorage.setItem("reservas", JSON.stringify(reservas));
+
+    mensaje.innerText = "✔ Reserva confirmada.";
+    form.reset();
+    cargarReservas();
+});
+
+cargarReservas();
